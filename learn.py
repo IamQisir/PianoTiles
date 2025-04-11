@@ -124,7 +124,7 @@ while running:
 			square = Square(win)
 			square_group.add(square)
 			counter = 0
-
+	# win.blit(image, (x, y)) draws the image at the specified coordinates (x, y)
 	win.blit(bg_img, (0,0))
 	square_group.update()
 
