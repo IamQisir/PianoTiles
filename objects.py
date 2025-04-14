@@ -40,10 +40,13 @@ class Tile(pygame.sprite.Sprite):
         self.rect.y += speed
         if self.rect.y >= HEIGHT:
             # if the tile is out of the screen, remove it from the group
-            # kill method is herit from the Sprite class
+            # kill removes the sprite from all groups it belongs to
             self.kill()
 
         if self.alive:
+            # pygame.draw.rect draws a rectangle on the surface
+            # pygame.Surface is a 2D image that can be manipulated and drawn on
+            # win.blit draws the surface on the window
             pygame.draw.rect(self.surface, self.color, (0, 0, TILE_WIDTH, TILE_HEIGHT))
             # if width > 0, used for line thickness
             # for example, the width of the rectangle is 4 pixels
