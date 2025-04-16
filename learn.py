@@ -53,11 +53,13 @@ overlay = pygame.image.load("Assets/red overlay.png")
 overlay = pygame.transform.scale(overlay, (WIDTH, HEIGHT))
 
 # MUSIC **********************************************************************
-
+# pygame.mixer.Sound is used to load and play sound effects
 buzzer_fx = pygame.mixer.Sound("Sounds/piano-buzzer.mp3")
 
+# pygame.mixer.music is used to load and play background music
 pygame.mixer.music.load("Sounds/piano-bgmusic.mp3")
 pygame.mixer.music.set_volume(0.8)
+# by setting the loops parameter to -1, the music will loop indefinitely
 pygame.mixer.music.play(loops=-1)
 
 # FONTS **********************************************************************
@@ -94,8 +96,8 @@ def get_speed(score):
     return 200 + 5 * score
 
 
-def play_notes(notePath):
-    pygame.mixer.Sound(notePath).play()
+def play_notes(note_path):
+    pygame.mixer.Sound(note_path).play()
 
 
 # NOTES **********************************************************************
@@ -163,7 +165,7 @@ while running:
 
             pos = None
 
-            notes_list = notes_dict["2"]
+            notes_list = notes_dict["1"]
             note_count = 0
             pygame.mixer.set_num_channels(len(notes_list))
 
@@ -187,6 +189,7 @@ while running:
                             th = Thread(target=play_notes, args=(f"Sounds/{note}.ogg",))
                             th.start()
                             th.join()
+                            # when all the notes are played, reset the note count using modulo operator
                             note_count = (note_count + 1) % len(notes_list)
 
                             tpos = tile.rect.centerx - 10, tile.rect.y
@@ -195,17 +198,20 @@ while running:
 
                         pos = None
                 
-				# check if the game is over
+                # if the tile's bottom edge is greater than or equal to the height of the window
+                # and the tile is alive, set the tile's color to red and play the buzzer sound
                 if tile.rect.bottom >= HEIGHT and tile.alive:
                     if not game_over:
                         tile.color = (255, 0, 0)
                         buzzer_fx.play()
                         game_over = True
-
+             
+            # if the user click on something instead of the tiles, play the buzzer sound and end the game
             if pos:
                 buzzer_fx.play()
                 game_over = True
 
+            # create new tiles at the top of the screen
             if len(tile_group) > 0:
                 t = tile_group.sprites()[-1]
                 if t.rect.top + speed >= 0:
@@ -245,6 +251,7 @@ while running:
                         index = random.randint(1, len(notes_dict))
                         notes_list = notes_dict[str(index)]
                         note_count = 0
+                        # determine how many threads to create based on the number of notes in the list
                         pygame.mixer.set_num_channels(len(notes_list))
 
                         text_group.empty()
